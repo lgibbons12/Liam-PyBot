@@ -4,15 +4,8 @@ import random
 from discord.ext import commands
 import json
 
-#grabbing the number
-filename = 'config.json'
-with open(filename, 'r') as f:
+with open("madlibs/madlibs.json", "r") as f:
     config = json.load(f)
-    config['num'] = random.randint(0, 5)
-
-os.remove(filename)
-with open(filename, 'w') as f:
-    json.dump(config, f, indent=4)
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -52,6 +45,7 @@ async def madlibs(ctx):
     await ctx.channel.send(f"Welcome to Mad Libs! For this one, please write $args, followed by {enters[0]} and {enters[1]}")
 @bot.command()
 async def args(ctx, arg1, arg2):
+    global number
     response = ""
     if number == 0:
         response = f"John was on his way to the market when a {arg1} person approached him and {arg2}."
@@ -66,13 +60,8 @@ async def args(ctx, arg1, arg2):
     else:
         response = f"I was busy playing {arg1} when all of a sudden a {arg2} attacked me."
 
-    #trying to figure out json
-    #data = json.loads('num')
-    #j_num = random.randint(0, 5)
-    #for obj in data:
-        #obj['num'] = j_num
-
-    #json.dumps(data)
+    config['num'] = random.randint(0, 5)
+    number = config['num']
     await ctx.channel.send(response)
     
 
