@@ -141,4 +141,3 @@ async def scores(ctx):
 
 
 bot.run(TOKEN)
-
