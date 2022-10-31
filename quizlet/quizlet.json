@@ -1,18 +1,27 @@
 {
   "terms": [
-    "mello",
-    "cello",
-    "lello",
-    "hello",
-    "delli"
-  ],
-  "definitions": [
     "hi",
     "bi",
     "ci",
     "di",
-    "lelli",
-    "melli"
+    "mi",
+    "ki"
   ],
-  "ans": 2
+  "definitions": [
+    "hello",
+    "bello",
+    "cello",
+    "dello",
+    "mello",
+    "kello"
+  ],
+  "tempDefinitions": [
+    "dello",
+    "bello",
+    "mello",
+    "cello",
+    "kello"
+  ],
+  "ans": "b",
+  "score": 2
 }
