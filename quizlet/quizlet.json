@@ -16,12 +16,13 @@
     "kello"
   ],
   "tempDefinitions": [
-    "dello",
-    "bello",
-    "mello",
+    "kello",
+    "hello",
     "cello",
-    "kello"
+    "dello",
+    "bello"
   ],
-  "ans": "b",
+  "ans": "a",
+  "numans": 2,
   "score": 2
 }
