@@ -193,11 +193,21 @@ async def on_message(message):
             response = "||{}||".format(secret)
             await message.channel.send(response)
             await message.channel.send("||{}||".format("Resetting All Values Now. . ."))
+            data['counter'] = 0
+            data['pl score'] = 0
+            data['op score'] = 0
+            with open('rps.json', 'w') as f:
+                json.dump(data, f, indent=2)
         elif temp_o_score == 3:
             secret = '**The opponent won :(**'
             response = "||{}||".format(secret)
             await message.channel.send(response)
             await message.channel.send("||{}||".format("Resetting All Values Now. . ."))
+            data['counter'] = 0
+            data['pl score'] = 0
+            data['op score'] = 0
+            with open('rps.json', 'w') as f:
+                json.dump(data, f, indent=2)
         else: 
             #writing the results back to the JSON file
             data['pl score'] = temp_p_score 
