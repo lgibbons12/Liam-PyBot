@@ -45,6 +45,8 @@ The bot was developed through the usage of https://www.freecodecamp.org/news/cre
 Then, with the occasional help of Stack Overflow, Mush, and the rest of the ATCCS class the bot became a reality.
 
 
+
+**Explanation in Layperson Terms!**
 This app connects to Discord in order to send and recieve commands between the code I wrote to Discord itself.
 At the start, it loads everything necessary to function, and resets all stored scores, values, etc.
 The bot uses a style of commands where it searches each message in the channel for commands:
