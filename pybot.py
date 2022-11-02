@@ -199,7 +199,11 @@ async def on_message(message):
             await message.channel.send("||{}||".format("Resetting All Values Now. . ."))
             data['pl score'] = 0
             data['op score'] = 0
+<<<<<<< HEAD
             data['rps-counter'] = 0
+=======
+            data['counter'] = 0
+>>>>>>> 7ce74a7882fc06da5cb43d543e1e14ae5e8979fe
             with open('rps.json', 'w') as f:
                 json.dump(data, f, indent=2)
         elif temp_o_score == 3:
@@ -209,7 +213,11 @@ async def on_message(message):
             await message.channel.send("||{}||".format("Resetting All Values Now. . ."))
             data['pl score'] = 0
             data['op score'] = 0
+<<<<<<< HEAD
             data['rps-counter'] = 0
+=======
+            data['counter'] = 0
+>>>>>>> 7ce74a7882fc06da5cb43d543e1e14ae5e8979fe
             with open('rps.json', 'w') as f:
                 json.dump(data, f, indent=2)
         else: 
@@ -421,7 +429,11 @@ async def on_message(message):
             data['quizlet-score'] += 1
             data['numans'] += 1
             data['temp_resp'] = 1
+<<<<<<< HEAD
             await message.channel.send(f"Correct! You got it right! Your Score: {data['quizlet-score']}")
+=======
+            await message.channel.send(f"Correct! You got it right! Your Score: {data['score']}")
+>>>>>>> 7ce74a7882fc06da5cb43d543e1e14ae5e8979fe
 
         else:
             data['numans'] += 1
@@ -434,8 +446,13 @@ async def on_message(message):
         with open("quizlet.json", "r") as f:
             data = json.load(f)
         if data['temp_resp'] == 0:
+<<<<<<< HEAD
             data['quizlet-score'] += 1
             await message.channel.send(f"Sorry, your score has been updated. Current Score: {data['quizlet-score']}")
+=======
+            data['score'] += 1
+            await message.channel.send(f"Sorry, your score has been updated. Current Score: {data['score']}")
+>>>>>>> 7ce74a7882fc06da5cb43d543e1e14ae5e8979fe
             data['temp_resp'] = 20
         with open('quizlet.json', 'w') as f:
             json.dump(data, f, indent=2)
