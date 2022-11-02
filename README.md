@@ -64,6 +64,3 @@ For example, my RPS Scores command goes like this:
 - It takes the scores saved in the program, and sends them as a message to the Discord Channel
 - I see the reply and know the current scores of the game!
 
-
-
-Explanation in layperson to come!
