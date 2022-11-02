@@ -25,6 +25,7 @@ with open("quizlet.json", "r") as f:
 
 data['score'] = 0
 data['numans'] = 0
+data['temp_resp'] = 20
 
 with open('quizlet.json', 'w') as f:
         json.dump(data, f, indent=2)
@@ -193,9 +194,9 @@ async def on_message(message):
             response = "||{}||".format(secret)
             await message.channel.send(response)
             await message.channel.send("||{}||".format("Resetting All Values Now. . ."))
-            data['counter'] = 0
             data['pl score'] = 0
             data['op score'] = 0
+            data['counter'] = 0
             with open('rps.json', 'w') as f:
                 json.dump(data, f, indent=2)
         elif temp_o_score == 3:
@@ -203,9 +204,9 @@ async def on_message(message):
             response = "||{}||".format(secret)
             await message.channel.send(response)
             await message.channel.send("||{}||".format("Resetting All Values Now. . ."))
-            data['counter'] = 0
             data['pl score'] = 0
             data['op score'] = 0
+            data['counter'] = 0
             with open('rps.json', 'w') as f:
                 json.dump(data, f, indent=2)
         else: 
@@ -300,6 +301,7 @@ async def on_message(message):
     elif message.content == "a":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "a":
             data['score'] += 1
@@ -318,6 +320,7 @@ async def on_message(message):
     elif message.content == "b":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "b":
             data['score'] += 1
@@ -336,6 +339,7 @@ async def on_message(message):
     elif message.content == "c":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "c":
             data['score'] += 1
@@ -354,6 +358,7 @@ async def on_message(message):
     elif message.content == "d":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "d":
             data['score'] += 1
@@ -393,14 +398,30 @@ async def on_message(message):
         if msg == data['ans']:
             data['score'] += 1
             data['numans'] += 1
+            data['temp_resp'] = 1
             await message.channel.send(f"Correct! You got it right! Your Score: {data['score']}")
 
         else:
             data['numans'] += 1
+            data['temp_resp'] = 0
             await message.channel.send(f"Incorrect, the correct answer was {data['ans']}")
 
         with open('quizlet.json', 'w') as f:
             json.dump(data, f, indent=2)
+    elif message.content == "I was right":
+        with open("quizlet.json", "r") as f:
+            data = json.load(f)
+        if data['temp_resp'] == 0:
+            data['score'] += 1
+            await message.channel.send(f"Sorry, your score has been updated. Current Score: {data['score']}")
+            data['temp_resp'] = 20
+        with open('quizlet.json', 'w') as f:
+            json.dump(data, f, indent=2)
+        
+        
+        
+        
+
     
     #prompt for true or false
     elif message.content == "tf":
@@ -425,6 +446,7 @@ async def on_message(message):
     elif message.content == "True":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "True":
             data['score'] += 1
@@ -442,6 +464,7 @@ async def on_message(message):
     elif message.content == "False":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "False":
             data['score'] += 1
