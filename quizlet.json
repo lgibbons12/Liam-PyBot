@@ -16,13 +16,15 @@
     "kello"
   ],
   "tempDefinitions": [
-    "kello",
+    "cello",
     "hello",
-    "dello",
     "mello",
-    "cello"
+    "kello",
+    "bello"
   ],
-  "ans": "c",
-  "numans": 0,
+  "ans": "hello",
+  "numans": 1,
+  "quizlet-score": 1,
+  "temp_resp": 1,
   "score": 0
 }

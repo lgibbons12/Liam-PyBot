@@ -1,5 +1,6 @@
 {
-  "counter": 0,
+  "rps-counter": 0,
   "pl score": 0,
-  "op score": 0
+  "op score": 0,
+  "counter": 0
 }

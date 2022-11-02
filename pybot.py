@@ -4,7 +4,6 @@ import os
 import random
 from discord.ext import commands
 import json
-import asyncio
 
 #.env code to get token
 from dotenv import load_dotenv
@@ -23,8 +22,9 @@ client = discord.Client(intents = intents)
 with open("quizlet.json", "r") as f:
     data = json.load(f)
 
-data['score'] = 0
+data['quizlet-score'] = 0
 data['numans'] = 0
+data['temp_resp'] = 20
 
 with open('quizlet.json', 'w') as f:
         json.dump(data, f, indent=2)
@@ -33,9 +33,11 @@ with open('quizlet.json', 'w') as f:
 #RPS Setup
 with open("rps.json", "r") as f:
     data = json.load(f)
-data['counter'] = 0
+
+data['rps-counter'] = 0
 data['pl score'] = 0
 data['op score'] = 0
+
 with open('rps.json', 'w') as f:
         json.dump(data, f, indent=2)
 
@@ -70,7 +72,7 @@ async def on_message(message):
     if message.content == "madlibs":
         with open("madlibs.json", "r") as f:
             config = json.load(f)
-        number = config['num']
+        number = config['madlibs-num']
         enters = []
         if number == 0:
             enters = ["adjective", "active verb"]
@@ -90,7 +92,7 @@ async def on_message(message):
     if message.content.startswith("ml"):
         with open("madlibs.json", "r") as f:
             config = json.load(f)
-        number = config['num']
+        number = config['madlibs-num']
 
         #takes the message and splits up the components of the madlibs
         args = message.content.split(" ")
@@ -115,7 +117,7 @@ async def on_message(message):
         await message.channel.send(response)
 
         #resets random number for madlibs and sends it to JSON
-        config['num'] = random.randint(0, 5)
+        config['madlibs-num'] = random.randint(0, 5)
         with open('madlibs.json', 'w') as f:
             json.dump(config, f, indent=2)
     
@@ -123,6 +125,8 @@ async def on_message(message):
     if message.content.startswith("rps"):
         args = message.content.split(" ")
         arg = args[1]
+
+        
 
         #load data from JSON and store it in temporary variables
         with open("rps.json", "r") as f:
@@ -132,7 +136,7 @@ async def on_message(message):
         
 
         #welcome message on first playthrough
-        if data['counter'] < 1:
+        if data['rps-counter'] < 1:
             await message.channel.send("Welcome to Rock, Paper, Scissors! To play please type *rps followed by r, p, or s. First to 3 wins!")
         
 
@@ -185,7 +189,7 @@ async def on_message(message):
                     await message.channel.send("Rock, Paper, Scissors!")
                     await message.channel.send(f"Tie! Player: {temp_p_score} Opponent: {temp_o_score}")
         else:
-            await message.channel.send("Sorry, we could not get that, please type *rps followed by a lowercase r, p, or s")
+            await message.channel.send("Sorry, we could not get that, please type rps followed by a lowercase r, p, or s")
         
         #logic for winning rps
         if temp_p_score == 3:
@@ -193,11 +197,21 @@ async def on_message(message):
             response = "||{}||".format(secret)
             await message.channel.send(response)
             await message.channel.send("||{}||".format("Resetting All Values Now. . ."))
+            data['pl score'] = 0
+            data['op score'] = 0
+            data['rps-counter'] = 0
+            with open('rps.json', 'w') as f:
+                json.dump(data, f, indent=2)
         elif temp_o_score == 3:
             secret = '**The opponent won :(**'
             response = "||{}||".format(secret)
             await message.channel.send(response)
             await message.channel.send("||{}||".format("Resetting All Values Now. . ."))
+            data['pl score'] = 0
+            data['op score'] = 0
+            data['rps-counter'] = 0
+            with open('rps.json', 'w') as f:
+                json.dump(data, f, indent=2)
         else: 
             #writing the results back to the JSON file
             data['pl score'] = temp_p_score 
@@ -206,7 +220,7 @@ async def on_message(message):
             data['op score'] = temp_o_score
             with open('rps.json', 'w') as f:
                 json.dump(data, f, indent=2)
-            data['counter'] += 1
+            data['rps-counter'] += 1
             with open('rps.json', 'w') as f:
                 json.dump(data, f, indent=2)
 
@@ -214,27 +228,46 @@ async def on_message(message):
     if message.content == "Scores":
         with open("rps.json", "r") as f:
             data = json.load(f)
-        await message.channel.send(f"Player: {data['pl score']} Opponent: {data['op score']}. Games Played: {data['counter']}")
+        await message.channel.send(f"Player: {data['pl score']} Opponent: {data['op score']}. Games Played: {data['rps-counter']}")
     
         
 
 
     #Quizlet Commands
-
-    #logic to add term to quizlet json
-    if message.content.startswith("addterm"):
+    if message.content.startswith("Display Terms"):
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        num = len(data['terms'])
+        for i in range(0, num):
+            await message.channel.send(f"Term: {data['terms'][i]}; Definition: {data['definitions'][i]}")
+        
+    #logic to add term to quizlet json
+    elif message.content.startswith("addterm"):
+        with open("quizlet.json", "r") as f:
+            data = json.load(f)
+        
 
         #splits arguments and adds them to the list
         arguments = message.content.split(" ")
-        data['terms'].append(arguments[1])
-        data['definitions'].append(arguments[2])
+        counter = 2
+        if (len(arguments) % 2) == 0:
+            await message.channel.send("Please enter a definition for each term")
+        else:
+            if len(arguments) < 4:
+                await message.channel.send("New term added!")
+            else:
+                await message.channel.send("New terms added!")
+            for i in range(1, len(arguments)):
+                if (counter % 2) == 0:
+                    data['terms'].append(arguments[i])
+                else:
+                    data['definitions'].append(arguments[i])
+                counter += 1
 
-        await message.channel.send("New term added!")
+            
 
-        with open('quizlet.json', 'w') as f:
-            json.dump(data, f, indent=2)
+            with open('quizlet.json', 'w') as f:
+                json.dump(data, f, indent=2)
 
     #multiple choice prompt
     elif message.content == "mc":
@@ -246,7 +279,7 @@ async def on_message(message):
         
         with open("quizlet.json", "r") as f:
             data = json.load(f)
-        term_choice = random.randint(0, len(data['terms']))
+        term_choice = random.randint(0, len(data['terms']) - 1)
         
         #selects corrent choice
         correct_choice = data['tempDefinitions'][term_choice]
@@ -290,11 +323,12 @@ async def on_message(message):
     elif message.content == "a":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "a":
-            data['score'] += 1
+            data['quizlet-score'] += 1
             data['numans'] += 1
-            await message.channel.send(f"Correct! You got it right! Your Score: {data['score']}")
+            await message.channel.send(f"Correct! You got it right! Your Score: {data['quizlet-score']}")
 
         else:
             data['numans'] += 1
@@ -308,11 +342,12 @@ async def on_message(message):
     elif message.content == "b":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "b":
-            data['score'] += 1
+            data['quizlet-score'] += 1
             data['numans'] += 1
-            await message.channel.send(f"Correct! You got it right! Your Score: {data['score']}")
+            await message.channel.send(f"Correct! You got it right! Your Score: {data['quizlet-score']}")
 
         else:
             data['numans'] += 1
@@ -326,11 +361,12 @@ async def on_message(message):
     elif message.content == "c":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "c":
-            data['score'] += 1
+            data['quizlet-score'] += 1
             data['numans'] += 1
-            await message.channel.send(f"Correct! You got it right! Your Score: {data['score']}")
+            await message.channel.send(f"Correct! You got it right! Your Score: {data['quizlet-score']}")
 
         else:
             data['numans'] += 1
@@ -344,11 +380,12 @@ async def on_message(message):
     elif message.content == "d":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "d":
-            data['score'] += 1
+            data['quizlet-score'] += 1
             data['numans'] += 1
-            await message.channel.send(f"Correct! You got it right! Your Score: {data['score']}")
+            await message.channel.send(f"Correct! You got it right! Your Score: {data['quizlet-score']}")
 
         else:
             data['numans'] += 1
@@ -362,7 +399,7 @@ async def on_message(message):
         with open("quizlet.json", "r") as f:
             data = json.load(f)
 
-        num = random.randint(0, len(data['terms']))
+        num = random.randint(0, len(data['terms']) - 1)
 
         await message.channel.send(f"What is the definition of {data['terms'][num]}")
 
@@ -381,16 +418,32 @@ async def on_message(message):
         msg = msg_list[1]
 
         if msg == data['ans']:
-            data['score'] += 1
+            data['quizlet-score'] += 1
             data['numans'] += 1
-            await message.channel.send(f"Correct! You got it right! Your Score: {data['score']}")
+            data['temp_resp'] = 1
+            await message.channel.send(f"Correct! You got it right! Your Score: {data['quizlet-score']}")
 
         else:
             data['numans'] += 1
+            data['temp_resp'] = 0
             await message.channel.send(f"Incorrect, the correct answer was {data['ans']}")
 
         with open('quizlet.json', 'w') as f:
             json.dump(data, f, indent=2)
+    elif message.content == "I was right":
+        with open("quizlet.json", "r") as f:
+            data = json.load(f)
+        if data['temp_resp'] == 0:
+            data['quizlet-score'] += 1
+            await message.channel.send(f"Sorry, your score has been updated. Current Score: {data['quizlet-score']}")
+            data['temp_resp'] = 20
+        with open('quizlet.json', 'w') as f:
+            json.dump(data, f, indent=2)
+        
+        
+        
+        
+
     
     #prompt for true or false
     elif message.content == "tf":
@@ -398,8 +451,8 @@ async def on_message(message):
             data = json.load(f)
 
         #takes two random numbers and decides if they are the same or not
-        num1 = random.randint(0, len(data['terms']))
-        num2 = random.randint(0, len(data['terms']))
+        num1 = random.randint(0, len(data['terms']) - 1)
+        num2 = random.randint(0, len(data['terms']) - 1)
         if num1 == num2:
             data['ans'] = "True"
         else:
@@ -415,11 +468,12 @@ async def on_message(message):
     elif message.content == "True":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "True":
-            data['score'] += 1
+            data['quizlet-score'] += 1
             data['numans'] += 1
-            await message.channel.send(f"Correct! You got it right! Your Score: {data['score']}")
+            await message.channel.send(f"Correct! You got it right! Your Score: {data['quizlet-score']}")
 
         else:
             data['numans'] += 1
@@ -432,11 +486,12 @@ async def on_message(message):
     elif message.content == "False":
         with open("quizlet.json", "r") as f:
             data = json.load(f)
+        data['temp_resp'] = 20
 
         if data['ans'] == "False":
-            data['score'] += 1
+            data['quizlet-score'] += 1
             data['numans'] += 1
-            await message.channel.send(f"Correct! You got it right! Your Score: {data['score']}")
+            await message.channel.send(f"Correct! You got it right! Your Score: {data['quizlet-score']}")
 
         else:
             data['numans'] += 1
@@ -450,15 +505,18 @@ async def on_message(message):
         with open("quizlet.json", "r") as f:
             data = json.load(f)
 
-        await message.channel.send(f"You have gotten {data['score']} correct out of {data['numans']}")
+        await message.channel.send(f"You have gotten {data['quizlet-score']} correct out of {data['numans']}")
 
         #logic for giving percentages
-        percent = 100 * (data['score'] / data['numans'])
+        percent = 100 * (data['quizlet-score'] / data['numans'])
         await message.channel.send(f"{percent}%")
         if percent > 0.8:
             await message.channel.send("You are doing great!")
         else:
             await message.channel.send("Do Better")
+    
+    elif message.content == "Thanks":
+        await message.channel.send("You are welcome :)")
 
 
 client.run(TOKEN)
